@@ -46,7 +46,7 @@ export default function CreateUser() {
         <Image source={require('../../assets/presupuesto.png')} resizeMode="contain" style={styles.logo}/>
         <View style={styles.viewForm}>
             <View style={styles.container}>
-                <Input placeholder='Correo Electrónico' keyboardType='email-address' rightIcon={<Icon type='material_community' name='email' size={22}/>} containerStyle={styles.input} onChange={(e)=> changePayload(e, "email")} errorMessage={error.email} autoCapitalize='none'/>
+                <Input placeholder='Correo Electrónico' keyboardType='email-address' rightIcon={<Icon type='material-community' name='email' size={22}/>} containerStyle={styles.input} onChange={(e)=> changePayload(e, "email")} errorMessage={error.email} autoCapitalize='none'/>
                 <Input placeholder='Contraseña' rightIcon={<Icon type='material-community' name={showPassword ? 'eye-off-outline': 'eye-outline'} size={22}  onPress={() => setShowPassword(!showPassword)}/>} containerStyle={styles.input} secureTextEntry={showPassword} onChange={(e)=> changePayload(e, "password")} errorMessage={error.password}/>
                 <Input placeholder='Contraseña' rightIcon={<Icon type='material-community' name={showRepeatPassword ? 'eye-off-outline': 'eye-outline'} size={22}  onPress={() => setShowRepeatPassword(!showRepeatPassword)}/>} containerStyle={styles.input} secureTextEntry={showRepeatPassword} onChange={(e)=> changePayload(e, "repeatPassword")} errorMessage={error.repeatPassword}/>
                 <Button title='Crear Cuenta' containerStyle={styles.btnContainer} buttonStyle={styles.btn} onPress={createUser}/>
