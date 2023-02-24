@@ -5,13 +5,18 @@ import { isEmpty, size } from "lodash";
 import { Button, Icon, Image, Input } from "@rneui/base";
 import Loading from "../../../../kernel/components/Loading";
 import { validateEmail }  from '../../../../kernel/validations'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import axios from '../../../../kernel/http-client.gateaway'
 
 export default function CreateAccount() {
+  
     const payload = {
         email: "",
         password: "",
         repeatPassword: "",
-      };
+    };
+
+    const auth = getAuth();
       
       const [show, setShow] = useState(false);
       const [error, setError] = useState(payload);
@@ -21,14 +26,44 @@ export default function CreateAccount() {
       const changePayload = (e, type) => {
         setData({ ...data, [type]: e.nativeEvent.text });
       };
-      
+
       const createUser = () => {
         if (!(isEmpty(data.email) || isEmpty(data.password))) {
           if (validateEmail(data.email)) {
             if (size(data.password) >= 6) {
               if (data.password === data.repeatPassword) {
-                setError({ email: "", password: "", repeatPassword: "" });
-                console.log("listo para el registro");
+                setShow(true);
+                setError(payload);
+                createUserWithEmailAndPassword(auth, data.email, data.password)
+                  .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    console.log("User create", user);
+                    (async () => {
+                      try {
+                        const object = {
+                          
+                          user: {
+                            email: data.email,
+                            uid: userCredential.uid,
+                            image_profile: "",
+                          }
+                        }
+                        const response = await axios.doPost('/person/', object)
+                        console.log("servidor", response)
+                      } catch (error) {
+                        setShow(false)
+                        console.log("error -> " + error)
+                      }
+                    })()
+                    // ...
+                  })
+                  .catch((error) => {
+                    setShow(false);
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // ..
+                  });
               } else {
                 setError({
                   email: "",
