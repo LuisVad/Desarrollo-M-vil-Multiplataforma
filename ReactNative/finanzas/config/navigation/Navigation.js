@@ -9,7 +9,7 @@ const Tab = createBottomTabNavigator()
 export default function navigation() {
   return (
     <NavigationContainer>
-        <Tab.Navigator initialRouteName='profile' screenOptions={({route}) => ({tabBarIcon: ({color}) => screenOptions(route, color), tabBarActiveTintColor: 'tomato', tabBarInactiveTintColor: 'gray' })} >
+        <Tab.Navigator initialRouteName='profile' screenOptions={({route}) => ({ headerShown: false, tabBarIcon: ({color}) => screenOptions(route, color), tabBarActiveTintColor: 'tomato', tabBarInactiveTintColor: 'gray' })} >
             <Tab.Screen name='profile' options={{title: 'Perfil'}} component={ProfileStack} />
             <Tab.Screen name='about' options={{title: 'Conócenos'}} component={AboutStack} />
         </Tab.Navigator>
