@@ -8,12 +8,14 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import * as Imagepicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import { doc, setDoc, getFirestore } from "firebase/firestore";
+import {getAuth, updateProfile} from 'firebase/auth'
 
 export default function UserLogged(props) {
+  const auth = getAuth();
   const {setReload, user} = props;
-  console.log("mi sesión", user);
+  console.log("mi sesión -> ", user);
   const [show, setShow] = useState(false)
-  const removeValue = async () => {
+  /*const removeValue = async () => {
     try {
       setShow(true)
       await AsyncStorage.removeItem('@session');
@@ -23,7 +25,7 @@ export default function UserLogged(props) {
       setShow(false)
       console.log('Error - UserLogged(12)', e)
     }
-  };
+  };*/
 
   const uploadImage = async (uri) => {
     setShow(true);
@@ -37,7 +39,26 @@ export default function UserLogged(props) {
 
   const changeAvatar = async () => {
     const resultPermission = await Permissions.askAsync(Permissions.CAMERA);
-    if (resultPermission.permissions.camera.status != 'denied') {
+    console.log("permisos ", resultPermission);
+    if (resultPermission.granted) {
+      let result = await Imagepicker.launchImageLibraryAsync({
+          mediaTypes: Imagepicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 1,
+      })
+      if (!result.canceled) {
+          uploadImage(result.assets[0].uri).then ((response)=>{
+              console.log("Imagen actualizada");
+              uploadPhotoProfile();
+          })
+          .catch((err)=>{
+              console.log("Error", err);
+          })
+      }else{
+          console.log("No se pudo cargar la imagen");
+      }
+    }
+    /*if (resultPermission.permissions.camera.status != 'denied') {
       let result = await Imagepicker.launchImageLibraryAsync({
         mediaTypes: Imagepicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -53,11 +74,23 @@ export default function UserLogged(props) {
       } else {
         console.log("no se ha seleccionado una imagen")
       }
-    }
+    }*/
   };
 
   const uploadPhotoProfile = () => {
     const storage = getStorage();
+    getDownloadURL(ref(storage, `avatars/${user.uid}`)) .then((url)=>{
+        updateProfile(auth.currentUser,{
+            photoURL: url,
+        }).then(()=>{
+          setShow(false);
+        })
+    }).catch((err)=>{
+      setShow(false);
+      console.log("Error al obtener la imagen ", err);
+    })
+
+    /*const storage = getStorage();
     getDownloadURL(ref(storage, `avatars/${user.uid}`)).then(async (url)=> {
       const db = getFirestore();
       const response = await setDoc(doc(db, "person", `${user.uid}`), {
@@ -67,12 +100,12 @@ export default function UserLogged(props) {
       console.log("repuesta de firestore ", response);
     }).catch((err)=>{
       console.log("Error al obtener la imagen ", err);
-    })
+    })*/
   };
   
   return (
     <View style={styles.container}>
-      <View style={styles.infoContainer}>
+      {user &&(<View style={styles.infoContainer}>
         <Avatar size="xlarge" rounded source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/finanzas-ed9fa.appspot.com/o/avatar%2F2XpKQNZ0KCZOO5atTUxpLYrIz6D3.jpg?alt=media&token=e959134d-0a2b-492f-b8ff-c972ecf34eed' }} containerStyle={styles.avatar}>
           <Avatar.Accessory size={40} onPress={changeAvatar}></Avatar.Accessory>
         </Avatar>
@@ -80,9 +113,9 @@ export default function UserLogged(props) {
           <Text style={styles.displayName}>{user.providerData[0].displayName ? user.providerData[0].displayName : 'Anónimo'}</Text>
           <Text>{user.providerData[0].email}</Text>
         </View>
-      </View>
-      <Button title="Cerrar Sesión" buttonStyle={styles.btn} onPress={removeValue}/>
-      <Loading show={show} text="Cerrando Sesión"/>
+      </View> )}
+      <Button title="Cerrar Sesión" buttonStyle={styles.btn} onPress={()=> auth.signOut()}/>
+      <Loading show={show} text="Actualizando imagen"/>
     </View>
   )
 }
