@@ -28,7 +28,7 @@ export default function Login(props) {
           console.log("Error -> Login Storage", e)
         }
         setShow(false);
-        navigation.navigate("profileStack");
+        navigation.navigate("userLogged");
         console.log(user);
       })
       .catch((error) => {
