@@ -38,7 +38,7 @@ export default function Login(props) {
       <ScrollView>
         <Image
           source={require("../../../../assets/hucha.png")}
-          resizeMode="contain"
+          //resizeMode="contain"
           style={styles.logotype}
         />
         <Input
@@ -81,7 +81,7 @@ export default function Login(props) {
         <Text style={styles.createAccount} onPress={() => console.log("vamos")}>
           ¡Registrate!
         </Text>
-        <Loading show={show} text="Iniciando sesión" name="erick" />
+        <Loading show={show} text="Iniciando sesión" name="Luis" />
       </ScrollView>
     </View>
   );
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   logotype: {
     width: "100%",
-    height: 150,
+    height: 40,
     marginTop: 16,
     marginBottom: 16,
   },
