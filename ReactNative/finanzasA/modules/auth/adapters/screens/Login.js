@@ -5,6 +5,7 @@ import { isEmpty } from "lodash";
 import Loading from "../../../../kernel/components/Loading";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getAuth } from "firebase/auth";
+import CreateUser from "../../../user/CreateUser";
 export default function Login(props) {
   const auth = getAuth();
   const { navigation } = props;
@@ -38,11 +39,11 @@ export default function Login(props) {
       <ScrollView>
         <Image
           source={require("../../../../assets/hucha.png")}
-          //resizeMode="contain"
+          resizeMode="contain"
           style={styles.logotype}
         />
         <Input
-          placeholder="Correo electrónico"
+          placeholder="Correo Electrónico"
           keyboardType="email-address"
           containerStyle={styles.input}
           onChange={(event) => setEmail(event.nativeEvent.text)}
@@ -78,7 +79,7 @@ export default function Login(props) {
           containerStyle={styles.btnContainer}
           onPress={login}
         />
-        <Text style={styles.createAccount} onPress={() => console.log("vamos")}>
+        <Text style={styles.createAccount} onPress={() => navigation.navigate("createUserStack")}>
           ¡Registrate!
         </Text>
         <Loading show={show} text="Iniciando sesión" name="Luis" />
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   },
   logotype: {
     width: "100%",
-    height: 40,
+    height: 150,
     marginTop: 16,
     marginBottom: 16,
   },
@@ -111,5 +112,6 @@ const styles = StyleSheet.create({
   },
   createAccount: {
     color: "#007bff",
+    textAlign: "center"
   },
 });

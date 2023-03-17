@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import React, {useState} from 'react'
-import { Input, Button, Image, Icon } from "@rneui/base";
+import { Input, Button, Image, Icon, Text } from "@rneui/base";
 
 export default function ChangeAdress() {
   const [display, setDisplay] = useState("")
@@ -9,43 +9,43 @@ export default function ChangeAdress() {
   const [showPassword, setShowPassword] = useState(true);
   return (
     <View style={styles.container}>
+      <View>
+        <Text style={styles.text}>Cambiar Dirección</Text>
+      </View>
         <Image
-          source={require("../../../../../assets/hucha.png")}
+          source={require("../../../../../assets/mapa.png")}
           resizeMode="contain"
           style={styles.logotype}
         />
-        <Input
-          placeholder="Correo electrónico"
-          keyboardType="email-address"
-          containerStyle={styles.input}
-        />
-        <Input
-          placeholder="Contraseña"
-          containerStyle={styles.input}
-          rightIcon={
-            <Icon
-              type="material-community"
-              name={showPassword ? "eye-off-outline" : "eye-outline"}
-              color="#007bff"
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          }
-        />
+       
         <Button
           title="Actualizar"
           icon={
             <Icon
               type="material-community"
-              name="login"
+              name="update"
               size={22}
               color="#FFF"
             />
           }
           buttonStyle={styles.btnSuccess}
           containerStyle={styles.btnContainer}
-          onPress={()=>console.log("HOLA")}
+          onPress={()=>console.log("Se cambio la Dirección!")}
         />
-      
+        <Button
+          title="Cerrar"
+          icon={
+            <Icon
+              type="material-community"
+              name="close-box"
+              size={22}
+              color="#FFF"
+            />
+          }
+          buttonStyle={styles.btnClose}
+          containerStyle={styles.btnContainer}
+          onPress={()=>console.log("Cerrar")}
+        />
     </View>
   )
 }
@@ -54,9 +54,15 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#73CAAF",
   },
+  text:{
+    backgroundColor: "tomato",
+    textAlign: "center",
+    color: "#FFF",
+    size: 500
+  },
   logotype: {
     width: "100%",
-    height: 150,
+    height: 120,
     marginTop: 16,
     marginBottom: 16,
   },
@@ -68,8 +74,12 @@ const styles = StyleSheet.create({
     color: "#FFF",
     backgroundColor: "#28a745",
   },
+  btnClose: {
+    color: "#FFF",
+    backgroundColor: "#E62727",
+  },
   btnContainer: {
-    margin: 16,
+    margin: 5,
   },
   createAccount: {
     color: "#007bff",

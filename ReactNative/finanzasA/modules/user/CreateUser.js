@@ -62,14 +62,14 @@ export default function CreateUser() {
   return (
     <KeyboardAwareScrollView>
       <Image
-        source={require("../../assets/presupuesto.png")}
+        source={require("../../assets/finanzas.png")}
         resizeMode="contain"
         style={styles.logo}
       />
       <View style={styles.viewForm}>
         <View style={styles.container}>
           <Input
-            placeholder="Correo electrónico"
+            placeholder="Correo Electrónico"
             keyboardType="email-address"
             rightIcon={
               <Icon type="material-community" name="email-outline" size={22} />
@@ -95,7 +95,7 @@ export default function CreateUser() {
             errorMessage={error.password}
           />
           <Input
-            placeholder="Repetir contraseña"
+            placeholder="Repetir Contraseña"
             containerStyle={styles.input}
             rightIcon={
               <Icon
@@ -110,7 +110,15 @@ export default function CreateUser() {
             errorMessage={error.repeatPassword}
           />
           <Button
-            title="crear cuenta"
+            title="Crear Cuenta"
+            icon={
+              <Icon
+                type="material-community"
+                name="account"
+                size={22}
+                color="#FFF"
+              />
+            }
             containerStyle={styles.btnContainer}
             buttonStyle={styles.btn}
             onPress={createUser}
