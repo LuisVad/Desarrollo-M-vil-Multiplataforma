@@ -1,39 +1,55 @@
-import { StyleSheet, View } from 'react-native'
-import React, {useState} from 'react'
-import { Input, Button, Image, Icon, Text } from "@rneui/base";
+import { Dimensions, StyleSheet, View } from 'react-native'
+import React, {useState, useEffect} from 'react'
+import { Input, Button, Image, Icon, Text, Divider } from "@rneui/base";
+import * as Location from 'expo-location'
+import * as Permission from 'expo-permissions'
+import MapWiew from 'react-native-maps'
 
-export default function ChangeAdress() {
-  const [display, setDisplay] = useState("")
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(true);
+const widthScreen = Dimensions.get('window').width;
+
+export default function ChangeAdress(props) {
+  const {isVisibleMap} =props;
+  const [address, setAddress] = useState(null);
+  const [location, setLocation] = useState(null);
+  useEffect(()=>{
+    (async ()=> {
+        const resultPermission = await Permission.askAsync(Permission.LOCATION);
+        const statusPermission = resultPermission.permissions.location.status
+        if (resultPermission.status !== 'denied') {
+          const loc = await Location.getCurrentPositionAsync({})
+          setLocation({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+            latitudDelta: 0.001,
+            longitudDelta: 0.001
+          })
+        } else {
+          const loc = await Location.getCurrentPositionAsync({})
+          setAddress(loc);
+        }
+    })()
+  },[]);
   return (
     <View style={styles.container}>
+      {location && (
+        <MapWiew style={styles.map} initialRegion={location} showsUserLocation={true} onRegionChange={(region)=> setLocation(region)}>
+          <MapWiew.Marker coordinate={{latitude: location.latitude, longitude: location.longitude}}/>
+        </MapWiew>
+      )}
+      <View style={{flex: 1, alignItems: "center", marginTop: 10}}>
+        <Divider style={styles.divider}/>
+      </View>
       <View>
         <Text style={styles.text}>Cambiar Dirección</Text>
       </View>
-        <Image
+      <Image
           source={require("../../../../../assets/mapa.png")}
           resizeMode="contain"
           style={styles.logotype}
         />
-       
-        <Button
-          title="Actualizar"
-          icon={
-            <Icon
-              type="material-community"
-              name="update"
-              size={22}
-              color="#FFF"
-            />
-          }
-          buttonStyle={styles.btnSuccess}
-          containerStyle={styles.btnContainer}
-          onPress={()=>console.log("Se cambio la Dirección!")}
-        />
-        <Button
-          title="Cerrar"
+      <View style={styles.containerButtons}>
+      <Button
+          title="Cancelar Ubicación"
           icon={
             <Icon
               type="material-community"
@@ -44,11 +60,27 @@ export default function ChangeAdress() {
           }
           buttonStyle={styles.btnClose}
           containerStyle={styles.btnContainer}
-          onPress={()=>console.log("Cerrar")}
+          onPress={()=>isVisibleMap(false)}
         />
+        <Button
+          title="Guardar"
+          icon={
+            <Icon
+              type="material-community"
+              name="update"
+              size={22}
+              color="#FFF"
+            />
+          }
+          buttonStyle={styles.btnSuccess}
+          containerStyle={styles.btnContainer}
+          onPress={()=>isVisibleMap(true)}
+        />
+      </View>
     </View>
   )
 }
+
 
 const styles = StyleSheet.create({
   container: {
