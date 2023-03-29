@@ -1,15 +1,42 @@
-import { Dimensions, StyleSheet, View, Text, Alert } from 'react-native'
-import React, {useState, useEffect} from 'react'
+import { Dimensions, StyleSheet, View, Text, Alert, Platform } from 'react-native'
+import React, {useState, useEffect, useRef} from 'react'
 import { Button, Image, Icon, Divider } from "@rneui/base";
 import * as Location from 'expo-location'
 import * as Permission from 'expo-permissions'
 import MapWiew, { Marker } from 'react-native-maps'
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications'
+
 
 const widthScreen = Dimensions.get('window').width;
 
+//configuración global - diseño
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+//función que envía la notificación
+async function sendPushNotification(expoPushToken){
+
+}
+
+//permisos para acceder a las notificaciones y obtener el token
+async function registerForPushNotificationsAsync(){
+
+}
+
 export default function ChangeAddress(props) {
   const { setShowModal } = props;
-    const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
     useEffect(() => {
         (async () => {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -31,7 +58,27 @@ export default function ChangeAddress(props) {
             }
         })();
     }, []);
-  const save = () => console.log("Guardada la Localizacion", location);
+
+    useEffect(() => {
+      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, []);
+
+  const save = async () => {
+    await sendPushNotification(expoPushToken)
+  } 
 
   return (
     <View>
