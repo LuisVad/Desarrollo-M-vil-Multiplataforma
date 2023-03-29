@@ -6,6 +6,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 //import { getAuth, updateProfile } from "firebase/auth";
 import * as Imagepicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
+import * as MediaLibrary from 'expo-media-library'
 import { getAuth, updateProfile } from "firebase/auth";
 import AccountOptions from "./AccountOptions";
 
@@ -24,20 +25,26 @@ export default function UserLogged(props) {
   };
 
   const changeAvatar = async () => {
-    const resultPermission = await Permissions.askAsync(Permissions.CAMERA);
-    if (resultPermission.permissions.camera.status !== "denied") {
+    const {status} = await MediaLibrary.requestPermissionsAsync()
+    if (status !== 'denied') {
       let result = await Imagepicker.launchImageLibraryAsync({
         mediaTypes: Imagepicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
       });
       if (!result.canceled) {
-        uploadImage(result.assets[0].uri).then((result) => {
+        uploadImage(result.assets[0].uri).then((response) => {
+          console.log('Imagen actualizada');
           uploadPhotoProfile();
-        });
+        }).catch((err) => {
+          console.log('Error', err)
+          setShow(false)
+        })
       } else {
-        //console.log("no se ha seleccionado una imagen");
+        console.log("No se ha seleccionado una imagen");
       }
+    } else {
+      //alert
     }
   };
 

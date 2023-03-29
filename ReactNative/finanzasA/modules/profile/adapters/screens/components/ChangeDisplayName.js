@@ -1,9 +1,41 @@
 import { StyleSheet, View } from 'react-native'
 import React, {useState} from 'react'
 import { Input, Button, Image, Icon, Text } from "@rneui/base";
+import { getAuth, updateProfile } from 'firebase/auth';
+import Loading from '../../../../../kernel/components/Loading';
+import { isEmpty } from 'lodash';
 
-export default function ChangeDisplayName() {
-  const [display, setDisplay] = useState("")
+export default function ChangeDisplayName(props) {
+  const { setReload } = props
+    const auth = getAuth()
+    const [displayName, setDisplayName] = useState(auth.currentUser.displayName ? auth.currentUser.displayName : '')
+    const [show, setShow] = useState(false)
+    const [text, setText] = useState('')
+    const [error, setError] = useState({ displayName: '' })
+
+   
+    const updateDisplayName = () => {
+      setShow(true)
+      setText('Actualizando...')
+      if (!isEmpty(displayName)) {
+          updateProfile(auth.currentUser, {
+              displayName: displayName
+          })
+              .then(() => {
+                  setError({displayName: ''})
+                  setShow(false)
+                  setReload(true)
+              })
+              .catch((err) => {
+                  setError({displayName: 'Error al actualizar nombre'})
+                  setShow(false)
+                  console.log('Fallo', err);
+              })
+      }else{
+          setShow(false)
+          setError({displayName: 'Campo obligatorio'})
+      }
+  }  
   
   return (
     <View style={styles.container}>
@@ -18,6 +50,9 @@ export default function ChangeDisplayName() {
         <Input
           placeholder="Nombre Completo"
           containerStyle={styles.input}
+          onChange={(event) => setDisplayName(event.nativeEvent.text)}
+          errorMessage={error.displayName}
+          autoCapitalize='none'
         />
         <Button
           title="Actualizar"
@@ -31,7 +66,7 @@ export default function ChangeDisplayName() {
           }
           buttonStyle={styles.btnSuccess}
           containerStyle={styles.btnContainer}
-          onPress={()=>console.log("Se cambio el Nombre!")}
+          onPress={updateDisplayName}
         />
         <Button
           title="Cerrar"
@@ -47,7 +82,7 @@ export default function ChangeDisplayName() {
           containerStyle={styles.btnContainer}
           onPress={()=>console.log("Cerrar")}
         />
-      
+      <Loading show={show} text={text} />
     </View>
   )
 }

@@ -2,6 +2,13 @@
   "expo": {
     "plugins": [
       [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
@@ -34,6 +41,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "mx.edu.utez.finanzasA",
+      "googleServicesFile":"./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyAXJpc5wghT5eBeSwAWENr34tOYH204158"
