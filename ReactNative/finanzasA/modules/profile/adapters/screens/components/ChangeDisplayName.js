@@ -68,20 +68,6 @@ export default function ChangeDisplayName(props) {
           containerStyle={styles.btnContainer}
           onPress={updateDisplayName}
         />
-        <Button
-          title="Cerrar"
-          icon={
-            <Icon
-              type="material-community"
-              name="close-box"
-              size={22}
-              color="#FFF"
-            />
-          }
-          buttonStyle={styles.btnClose}
-          containerStyle={styles.btnContainer}
-          onPress={()=>console.log("Cerrar")}
-        />
       <Loading show={show} text={text} />
     </View>
   )
